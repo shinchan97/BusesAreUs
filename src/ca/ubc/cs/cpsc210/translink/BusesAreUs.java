@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import ca.ubc.cs.cpsc210.translink.model.Stop;
 import ca.ubc.cs.cpsc210.translink.model.StopManager;
+import ca.ubc.cs.cpsc210.translink.model.exception.StopException;
 import ca.ubc.cs.cpsc210.translink.parsers.ArrivalsParser;
 import ca.ubc.cs.cpsc210.translink.parsers.BusParser;
 import ca.ubc.cs.cpsc210.translink.parsers.exception.ArrivalsDataMissingException;
@@ -108,8 +109,13 @@ public class BusesAreUs extends Activity implements LocationListener, StopSelect
      * @param nearest stop that is nearest to user (null if no stop within StopManager.RADIUS metres)
      */
     @Override
-    public void onLocationChanged(Stop nearest, LatLon locn) {
-        // TODO: Complete the implementation of this method (Task 6)
+    public void onLocationChanged(Stop nearest, LatLon locn) { //task 6
+        if (nearest != null) {
+            myNearestStop = nearest;
+            nearestStopLabel.setText(nearest.getNumber() + " " + nearest.getName());
+        } else {
+            nearestStopLabel.setText("stops all out of range");
+        }
     }
 
     @Override
@@ -148,8 +154,14 @@ public class BusesAreUs extends Activity implements LocationListener, StopSelect
      * @param stop stop selected by user
      */
     @Override
-    public void onStopSelected(Stop stop) {
-        // TODO: Complete the implementation of this method (Task 7)
+    public void onStopSelected(Stop stop) { //task 7
+        try {
+            StopManager.getInstance().setSelected(stop);
+        } catch (StopException e) {
+            e.printStackTrace();
+        }
+        new DownloadBusLocationDataTask().execute(stop);
+        fragment.plotBuses();
     }
 
     /**

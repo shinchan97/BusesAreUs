@@ -39,6 +39,8 @@ public class BusRouteDrawer extends MapViewOverlay {
      */
     public void plotRoutes(int zoomLevel) {
         //TODO: complete the implementation of this method (Task 7)
+        Polyline p1 =  new Polyline(context);
+
     }
 
     public List<Polyline> getBusRouteOverlays() {

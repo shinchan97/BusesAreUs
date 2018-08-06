@@ -8,8 +8,11 @@ import android.location.Location;
 import ca.ubc.cs.cpsc210.translink.BusesAreUs;
 import ca.ubc.cs.cpsc210.translink.R;
 import ca.ubc.cs.cpsc210.translink.model.Stop;
+import ca.ubc.cs.cpsc210.translink.model.StopManager;
+import ca.ubc.cs.cpsc210.translink.util.Geometry;
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
 import org.osmdroid.bonuspack.overlays.Marker;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 import java.util.HashMap;
@@ -53,10 +56,22 @@ public class BusStopPlotter extends MapViewOverlay {
     /**
      * Mark all visible stops in stop manager onto map.
      */
-    public void markStops(Location currentLocation) {
+    public void markStops(Location currentLocation) { //task 5
         Drawable stopIconDrawable = activity.getResources().getDrawable(R.drawable.stop_icon);
-
-        // TODO: complete the implementation of this method (Task 5)
+        for (Stop s: StopManager.getInstance()) {
+            updateVisibleArea();
+            Marker m1 = new Marker(mapView);
+            if (Geometry.rectangleContainsPoint(northWest, southEast, s.getLocn())) {
+                stopClusterer.add(m1);
+            }
+            GeoPoint g1 = new GeoPoint(s.getLocn().getLatitude(), s.getLocn().getLongitude());
+            m1.setPosition(g1);
+            m1.setInfoWindow(stopInfoWindow);
+            setMarker(s, m1);
+            m1.setRelatedObject(s);
+            m1.setIcon(stopIconDrawable);
+            m1.setTitle(s.getNumber() + " " + s.getName() + " " + s.getRoutes().toString());
+        }
     }
 
     /**
@@ -83,12 +98,23 @@ public class BusStopPlotter extends MapViewOverlay {
      *
      * @param nearest stop nearest to user's location (null if no stop within StopManager.RADIUS metres)
      */
-    public void updateMarkerOfNearest(Stop nearest) {
+    public void updateMarkerOfNearest(Stop nearest) { //task 6
         Drawable stopIconDrawable = activity.getResources().getDrawable(R.drawable.stop_icon);
         Drawable closestStopIconDrawable = activity.getResources().getDrawable(R.drawable.closest_stop_icon);
 
-        // TODO: complete the implementation of this method (Task 6)
+        if (nearestStnMarker != null) {
+            nearestStnMarker.setIcon(stopIconDrawable);
+            nearestStnMarker = null;
+        }
+
+        if (nearest != null) {
+            nearestStnMarker = getMarker(nearest);
+            if (nearestStnMarker != null) {
+                nearestStnMarker.setIcon(closestStopIconDrawable);
+            }
+        }
     }
+
 
     /**
      * Manage mapping from stops to markers using a map from stops to markers.
