@@ -139,7 +139,7 @@ public class BusStopPlotter extends MapViewOverlay {
 
         if (nearestStnMarker != null) {
             nearestStnMarker.setIcon(stopIconDrawable);
-//            nearestStnMarker = null;
+            nearestStnMarker = null;
         }
 
         if (nearest != null) {
