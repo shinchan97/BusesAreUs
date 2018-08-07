@@ -203,5 +203,7 @@ public class Stop implements Iterable<Arrival> {
         this.locn = locn;
     }
 
-
+    public ArrayList<Arrival> getArrivals() {
+        return arrivals;
+    }
 }

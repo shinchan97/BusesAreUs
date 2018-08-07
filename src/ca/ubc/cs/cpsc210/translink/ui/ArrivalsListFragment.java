@@ -35,8 +35,8 @@ public class ArrivalsListFragment extends ListFragment {
      *
      * @return list of arrivals at selected stop
      */
-    private ArrayList<Arrival> getArrivalsForSelectedStop() {
-        return null;
+    private ArrayList<Arrival> getArrivalsForSelectedStop() { //task 9
+        return StopManager.getInstance().getSelected().getArrivals();
     }
 
     /**

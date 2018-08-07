@@ -10,6 +10,7 @@ import ca.ubc.cs.cpsc210.translink.R;
 import ca.ubc.cs.cpsc210.translink.model.Stop;
 import ca.ubc.cs.cpsc210.translink.model.StopManager;
 import ca.ubc.cs.cpsc210.translink.util.Geometry;
+import ca.ubc.cs.cpsc210.translink.util.LatLon;
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.GeoPoint;
@@ -58,20 +59,40 @@ public class BusStopPlotter extends MapViewOverlay {
      */
     public void markStops(Location currentLocation) { //task 5
         updateVisibleArea();
-        newStopClusterer();
         Drawable stopIconDrawable = activity.getResources().getDrawable(R.drawable.stop_icon);
+        stopClusterer.getItems().clear();
         for (Stop s: StopManager.getInstance()) {
-            Marker m1 = new Marker(mapView);
             if (Geometry.rectangleContainsPoint(northWest, southEast, s.getLocn())) {
+                Marker m1 = stopMarkerMap.get(s);
+                if (m1 == null) {
+                    m1 = newMarker(stopIconDrawable, s);
+                }
+                setMarker(s, m1);
                 stopClusterer.add(m1);
             }
-            GeoPoint g1 = new GeoPoint(s.getLocn().getLatitude(), s.getLocn().getLongitude());
-            m1.setPosition(g1);
-            m1.setInfoWindow(stopInfoWindow);
-            setMarker(s, m1);
-            m1.setRelatedObject(s);
-            m1.setIcon(stopIconDrawable);
-            m1.setTitle(s.getNumber() + " " + s.getName() + " " + s.getRoutes().toString());
+        }
+        markTheNearest(currentLocation);
+        stopClusterer.invalidate();
+    }
+
+    private Marker newMarker(Drawable stopIconDrawable, Stop s) {
+        Marker m1 = new Marker(mapView);
+        GeoPoint g1 = new GeoPoint(s.getLocn().getLatitude(), s.getLocn().getLongitude());
+        m1.setPosition(g1);
+        m1.setInfoWindow(stopInfoWindow);
+        m1.setRelatedObject(s);
+        m1.setIcon(stopIconDrawable);
+        m1.setTitle(s.getNumber() + " " + s.getName() + " " + s.getRoutes().toString());
+        return m1;
+    }
+
+
+
+    private void markTheNearest(Location currentLocation) {
+        if (currentLocation != null) {
+            LatLon userloc = new LatLon(currentLocation.getLatitude(), currentLocation.getLongitude());
+            Stop closest = StopManager.getInstance().findNearestTo(userloc);
+            updateMarkerOfNearest(closest);
         }
     }
 
@@ -105,7 +126,6 @@ public class BusStopPlotter extends MapViewOverlay {
 
         if (nearestStnMarker != null) {
             nearestStnMarker.setIcon(stopIconDrawable);
-            nearestStnMarker = null;
         }
 
         if (nearest != null) {

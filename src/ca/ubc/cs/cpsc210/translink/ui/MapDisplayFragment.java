@@ -300,7 +300,7 @@ public class MapDisplayFragment extends Fragment implements MapEventsReceiver, I
     private void handleLocationChange(Location location) { //task 6
         LatLon userloc = new LatLon(location.getLatitude(), location.getLongitude());
         currentLocation = location;
-        Stop closestSt = stopManager.findNearestTo(userloc);
+        Stop closestSt = StopManager.getInstance().findNearestTo(userloc);
         busStopPlotter.updateMarkerOfNearest(closestSt);
         locationListener.onLocationChanged(closestSt, userloc);
     }

@@ -30,8 +30,8 @@ public class HttpArrivalDataProvider extends AbstractHttpDataProvider {
         if (stop != null) {
             Number stopNo = stop.getNumber();
             String stopNoStr = stopNo.toString();
-            String myAPI = TranslinkToken.TRANSLINK_API_KEY;
-            String url = "http://api.translink.ca/rttiapi/v1/stops/" + stopNo + "/estimates?apikey=" + myAPI;
+            String myApi = TranslinkToken.TRANSLINK_API_KEY;
+            String url = "http://api.translink.ca/rttiapi/v1/stops/" + stopNo + "/estimates?apikey=" + myApi;
             URL url1 = new URL(url);
             result = url1;
         }
