@@ -84,14 +84,21 @@ public class BusStopPlotter extends MapViewOverlay {
         m1.setInfoWindow(stopInfoWindow);
         m1.setRelatedObject(s);
         m1.setIcon(stopIconDrawable);
+        makeBusNo(s, m1);
+        return m1;
+    }
+
+    private void makeBusNo(Stop s, Marker m1) {
         ArrayList<String> busNo = new ArrayList<>();
         for (Route r: s.getRoutes()) {
             busNo.add(r.getNumber());
         }
-        m1.setTitle(s.getNumber() + " " + s.getName() + "\n" + busNo);
-        return m1;
+        String busNos = new String();
+        for (String str: busNo) {
+            busNos = busNos + "\n" + str;
+        }
+        m1.setTitle(s.getNumber() + " " + s.getName() + " " + busNos);
     }
-
 
 
     private void markTheNearest(Location currentLocation) {
