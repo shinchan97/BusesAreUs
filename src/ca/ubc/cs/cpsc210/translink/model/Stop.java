@@ -14,7 +14,7 @@ public class Stop implements Iterable<Arrival> {
     private int number;
     private String name;
     private LatLon locn;
-    private List<Arrival> arrivals;
+    private ArrayList<Arrival> arrivals;
     private List<Bus> buses;
 
     /**
@@ -202,4 +202,6 @@ public class Stop implements Iterable<Arrival> {
     public void setLocn(LatLon locn) {
         this.locn = locn;
     }
+
+
 }

@@ -298,10 +298,11 @@ public class MapDisplayFragment extends Fragment implements MapEventsReceiver, I
      * @param location the location of the user
      */
     private void handleLocationChange(Location location) { //task 6
-        LatLon ll1 = new LatLon(location.getLatitude(), location.getLongitude());
-        Stop s2 = stopManager.findNearestTo(ll1);
-        busStopPlotter.updateMarkerOfNearest(s2);
-        locationListener.onLocationChanged(s2, ll1);
+        LatLon userloc = new LatLon(location.getLatitude(), location.getLongitude());
+        currentLocation = location;
+        Stop closestSt = stopManager.findNearestTo(userloc);
+        busStopPlotter.updateMarkerOfNearest(closestSt);
+        locationListener.onLocationChanged(closestSt, userloc);
     }
 
     /**

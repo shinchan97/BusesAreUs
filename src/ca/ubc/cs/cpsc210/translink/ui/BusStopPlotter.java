@@ -57,9 +57,10 @@ public class BusStopPlotter extends MapViewOverlay {
      * Mark all visible stops in stop manager onto map.
      */
     public void markStops(Location currentLocation) { //task 5
+        updateVisibleArea();
+        newStopClusterer();
         Drawable stopIconDrawable = activity.getResources().getDrawable(R.drawable.stop_icon);
         for (Stop s: StopManager.getInstance()) {
-            updateVisibleArea();
             Marker m1 = new Marker(mapView);
             if (Geometry.rectangleContainsPoint(northWest, southEast, s.getLocn())) {
                 stopClusterer.add(m1);

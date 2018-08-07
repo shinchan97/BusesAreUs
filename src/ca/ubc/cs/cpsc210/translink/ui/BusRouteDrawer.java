@@ -2,14 +2,19 @@ package ca.ubc.cs.cpsc210.translink.ui;
 
 import android.content.Context;
 import ca.ubc.cs.cpsc210.translink.BusesAreUs;
+import ca.ubc.cs.cpsc210.translink.model.*;
+import ca.ubc.cs.cpsc210.translink.util.Geometry;
+import ca.ubc.cs.cpsc210.translink.util.LatLon;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.overlays.Polyline;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 // A bus route drawer
 public class BusRouteDrawer extends MapViewOverlay {
@@ -37,10 +42,49 @@ public class BusRouteDrawer extends MapViewOverlay {
     /**
      * Plot each visible segment of each route pattern of each route going through the selected stop.
      */
-    public void plotRoutes(int zoomLevel) {
-        //TODO: complete the implementation of this method (Task 7)
-        Polyline p1 =  new Polyline(context);
+    public void plotRoutes(int zoomLevel) { // task 7
+        Stop selected = getArrivals();
+        if (selected != null) {
+            Set<Route> routes = selected.getRoutes();
+            for (Route r : routes) {
+                List<RoutePattern> rp1 = getRoutePatterns(r);
+                for (RoutePattern rp: rp1) {
+                    List<LatLon> ll1 = rp.getPath();
+                    for (int i = 0; i < ll1.size() - 1; i++) {
+                        if (Geometry.rectangleIntersectsLine(northWest, southEast, ll1.get(i), ll1.get(i + 1))) {
+                            drawline(zoomLevel, r, ll1, i);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
+    private Stop getArrivals() {
+        Stop selected = StopManager.getInstance().getSelected();
+        updateVisibleArea();
+        busRouteLegendOverlay.clear();
+        busRouteOverlays.clear();
+        return selected;
+    }
+
+    private List<RoutePattern> getRoutePatterns(Route r) {
+        List<RoutePattern> rp1 = r.getPatterns();
+        busRouteLegendOverlay.add(r.getNumber());
+        return rp1;
+    }
+
+    private void drawline(int zoomLevel, Route r, List<LatLon> ll1, int i) {
+        List<GeoPoint> geo1 = new ArrayList<GeoPoint>();
+        GeoPoint firstgeo = new GeoPoint(ll1.get(i).getLatitude(), ll1.get(i).getLongitude());
+        GeoPoint secondgeo = new GeoPoint(ll1.get(i + 1).getLatitude(), ll1.get(i + 1).getLongitude());
+        geo1.add(firstgeo);
+        geo1.add(secondgeo);
+        Polyline pol1 = new Polyline(mapView.getContext());
+        pol1.setColor(busRouteLegendOverlay.getColor(r.getNumber()));
+        pol1.setWidth(getLineWidth(zoomLevel));
+        pol1.setPoints(geo1);
+        busRouteOverlays.add(pol1);
     }
 
     public List<Polyline> getBusRouteOverlays() {
