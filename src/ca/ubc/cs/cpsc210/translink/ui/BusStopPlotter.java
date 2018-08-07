@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import ca.ubc.cs.cpsc210.translink.BusesAreUs;
 import ca.ubc.cs.cpsc210.translink.R;
+import ca.ubc.cs.cpsc210.translink.model.Route;
 import ca.ubc.cs.cpsc210.translink.model.Stop;
 import ca.ubc.cs.cpsc210.translink.model.StopManager;
 import ca.ubc.cs.cpsc210.translink.util.Geometry;
@@ -16,6 +17,7 @@ import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,7 +84,11 @@ public class BusStopPlotter extends MapViewOverlay {
         m1.setInfoWindow(stopInfoWindow);
         m1.setRelatedObject(s);
         m1.setIcon(stopIconDrawable);
-        m1.setTitle(s.getNumber() + " " + s.getName() + " " + s.getRoutes().toString());
+        ArrayList<String> busNo = new ArrayList<>();
+        for (Route r: s.getRoutes()) {
+            busNo.add(r.getNumber());
+        }
+        m1.setTitle(s.getNumber() + " " + s.getName() + "\n" + busNo);
         return m1;
     }
 
